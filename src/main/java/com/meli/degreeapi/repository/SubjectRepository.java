@@ -23,4 +23,11 @@ public class SubjectRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public Subject findByName(String name) {
+        return this.subjects.stream()
+                .filter(s -> s.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
 }

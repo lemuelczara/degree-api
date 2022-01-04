@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.meli.degreeapi.domain.Subject;
 import com.meli.degreeapi.dto.SubjectRequest;
+import com.meli.degreeapi.exception.NoSuchElementFoundException;
+import com.meli.degreeapi.exception.SubjectInUseException;
 import com.meli.degreeapi.repository.SubjectRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,13 @@ public class SubjectService {
     private SubjectRepository repository;
 
     public Subject save(SubjectRequest httpRequest) {
+        Subject subjectAlreadyExists = this.repository.findByName(httpRequest.getName());
+
+        if (subjectAlreadyExists != null) {
+            throw new SubjectInUseException(
+                    "The receive Subject: " + subjectAlreadyExists.getName() + " is already in use!");
+        }
+
         Subject subject = Subject
                 .builder()
                 .id(String.valueOf(new Random().nextInt(1000)))
@@ -28,6 +37,12 @@ public class SubjectService {
     }
 
     public Subject findById(String id) {
-        return this.repository.findById(id);
+        Subject subject = this.repository.findById(id);
+
+        if (subject == null) {
+            throw new NoSuchElementFoundException("The Subject with ID: " + id + " not exists!");
+        }
+
+        return subject;
     }
 }
