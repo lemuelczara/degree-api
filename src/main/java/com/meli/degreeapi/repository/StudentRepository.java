@@ -16,4 +16,8 @@ public class StudentRepository {
 
         return student;
     }
+
+    public Student findById(String id) {
+        return this.students.stream().filter(student -> student.getId().equals(id)).findFirst().get();
+    }
 }
